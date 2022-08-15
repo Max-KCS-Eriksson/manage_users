@@ -40,9 +40,11 @@ def get_info():
         print(f'- Password may not start with a "0" (zero) -')
         pw = getpass.getpass(f'{printcolors.GREEN}Select Password: {printcolors.NOCOLOR}')
         
-        forbid_chars = '0'    # Password may not start with "0" (zero), because the csv shortens e.g. "0001" to "1"
+        forbid_chars = '0'      # Password may not start with "0" (zero), because the csv shortens e.g. "0001" to "1"
         test_pw = list(pw)      # To use in below logical comparison
         if not(len(pw) == 0 or test_pw[0] == forbid_chars): # TODO: Confirm password
+            pw_confirm = getpass.getpass(f'{printcolors.GREEN}Confirm Password: {printcolors.NOCOLOR}')
+        if pw == pw_confirm:    # Comfirms password
             break   # Breaks if valid input
     
     while True:                 # Loop until valid input
