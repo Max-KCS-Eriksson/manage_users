@@ -28,20 +28,16 @@ def get_info():
         name = input('Name: ')
         
         forbidden_chars = '123456789§½!"#¤%&/()=+?,.-_\'*<>|@£$€¥{[]}±~¶¡'  # TODO
-        if len(name) < 2 or any(char in forbidden_chars for char in list(name)):
-            continue
-        else:   # Breaks if valid input
-            break
+        if not(len(name) < 2 or any(char in forbidden_chars for char in list(name))):
+            break   # Breaks if valid input
         
     while True:                 # Loop until valid input
         pw = input('Select Password: ')
         
         forbidden_char = '0'    # Password may not start with "0" (zero), because the csv shortens e.g. "0001" to "1"
         test_pw = list(pw)
-        if len(pw) == 0 or test_pw[0] == forbidden_char:
-            continue
-        else:
-            break
+        if not(len(pw) == 0 or test_pw[0] == forbidden_char):
+            break   # Breaks if valid input
     
     while True:                 # Loop until valid input           
         birthdate = input('Birthday | YYMMDD: ')
