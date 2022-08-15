@@ -13,8 +13,8 @@ class printcolors:
     WARNING = '\033[1;31m'    # bold, color
     NOCOLOR = '\033[0m'
 
-def create_csv(csv_file):       # Create file with headers if file don't exist
-    headers = ['User', 'Admin', 'Password', 'Name', 'Birthdate']    # TODO: This variable should be outside the function and passed as an arg
+def create_csv(csv_file):           # Create file with headers if file don't exist
+    headers = ['User', 'Admin', 'Password', 'Name', 'Birthdate']    # TODO: This variable should be outside the function and passed as an arg form user input
     with open(csv_file, 'w') as csv_file:
         for header in headers:
             csv_file.write(header + ',')
@@ -24,23 +24,25 @@ def create_csv(csv_file):       # Create file with headers if file don't exist
 
 def get_info():
     print(f'{printcolors.OKGREEN}Enter user information{printcolors.NOCOLOR}')
+
     while True:                 # Loop until valid input
-        name = input('Name: ')
+        name = input('- Numbers and special characters NOT allowed -\nName: ')
         
-        forbidden_chars = '123456789§½!"#¤%&/()=+?,.-_\'*<>|@£$€¥{[]}±~¶¡'  # TODO
-        if not(len(name) < 2 or any(char in forbidden_chars for char in list(name))):
+        forbid_chars = '123456789§½!"#¤%&/()=+?,.-_\'*<>|@£$€¥{[]}±~¶¡'  # TODO: Is this complete?
+        if not(len(name) < 2 or any(char in forbid_chars for char in list(name))):
             break   # Breaks if valid input
         
     while True:                 # Loop until valid input
-        pw = input('Select Password: ')
+        pw = input('- Password may not start with a "0" (zero) -\nSelect Password: ')
         
-        forbidden_char = '0'    # Password may not start with "0" (zero), because the csv shortens e.g. "0001" to "1"
-        test_pw = list(pw)
-        if not(len(pw) == 0 or test_pw[0] == forbidden_char):
+        forbid_chars = '0'    # Password may not start with "0" (zero), because the csv shortens e.g. "0001" to "1"
+        test_pw = list(pw)      # To use in below logical comparison
+        if not(len(pw) == 0 or test_pw[0] == forbid_chars):
             break   # Breaks if valid input
     
     while True:                 # Loop until valid input           
         birthdate = input('Birthday | YYMMDD: ')
+        
         try:
             int(birthdate)      # Accept only numbers as valid format
         except:
@@ -51,7 +53,7 @@ def get_info():
 
     return pw, name, birthdate
 
-def create_user():              # Returns complete user info as list
+def create_user():                  # Returns complete user info as list
     is_admin = False
 
     pw, name, birthdate = get_info()
@@ -78,6 +80,7 @@ def w_user_to_csv(user_info, csv_file):
 def new_users():
     while True:
         print()     # For formating of output to consol
+        
         w_user_to_csv(create_user(), file_path)
 
         add_more = input('Add more users? y/n: ')
@@ -90,12 +93,13 @@ def main():
         csv_file = open(file_path, 'r')
         csv_file.close()
     except:
-        print(' ', file_path, f'{printcolors.WARNING}doesn\'t exist{printcolors.NOCOLOR}\n')  # First string is to indent output by two spaces
+        print('\n ', file_path, f'{printcolors.WARNING}doesn\'t exist{printcolors.NOCOLOR}\n')  # First string is to indent output by two spaces
         user_input = input('Would you like to create the file? y/n: ')
-        if user_input.lower() == 'y' or user_input.lower() == 'yes':  # TODO: Breaks program - can't read an existing file and append to
+        
+        if user_input.lower() == 'y' or user_input.lower() == 'yes':
             create_csv(file_path)
             new_users()
-        if user_input.lower() == 'n' or user_input.lower() == 'no':     # TODO: Select new file to write to
+        elif user_input.lower() == 'n' or user_input.lower() == 'no':     # TODO: Select new file to write to
             print(f'\n{printcolors.WARNING}  PROGRAM TERMINATED{printcolors.NOCOLOR}\n')
     else:
         new_users()
