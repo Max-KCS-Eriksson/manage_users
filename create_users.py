@@ -5,11 +5,14 @@
 """
 
 import datetime
+import getpass
 
 file_path = './write_to/users.csv'  # TODO: Let user select file
 
 class printcolors:
+    GREEN ='\033[0;32m'
     OKGREEN = '\033[1;32m'    # bold, color
+    YELLOW ='\033[0;33m'
     WARNING = '\033[1;31m'    # bold, color
     NOCOLOR = '\033[0m'
 
@@ -26,22 +29,25 @@ def get_info():
     print(f'{printcolors.OKGREEN}Enter user information{printcolors.NOCOLOR}')
 
     while True:                 # Loop until valid input
-        name = input('- Numbers and special characters NOT allowed -\nName: ')
+        print(f'- Numbers and special characters NOT allowed -')
+        name = input(f'{printcolors.GREEN}Name: {printcolors.NOCOLOR}')
         
         forbid_chars = '123456789§½!"#¤%&/()=+?,.-_\'*<>|@£$€¥{[]}±~¶¡'  # TODO: Is this complete?
         if not(len(name) < 2 or any(char in forbid_chars for char in list(name))):
             break   # Breaks if valid input
         
     while True:                 # Loop until valid input
-        pw = input('- Password may not start with a "0" (zero) -\nSelect Password: ')
+        print(f'- Password may not start with a "0" (zero) -')
+        pw = getpass.getpass(f'{printcolors.GREEN}Select Password: {printcolors.NOCOLOR}')
         
         forbid_chars = '0'    # Password may not start with "0" (zero), because the csv shortens e.g. "0001" to "1"
         test_pw = list(pw)      # To use in below logical comparison
-        if not(len(pw) == 0 or test_pw[0] == forbid_chars):
+        if not(len(pw) == 0 or test_pw[0] == forbid_chars): # TODO: Confirm password
             break   # Breaks if valid input
     
-    while True:                 # Loop until valid input           
-        birthdate = input('Birthday | YYMMDD: ')
+    while True:                 # Loop until valid input
+        print(f'- YYMMDD -')
+        birthdate = input(f'{printcolors.GREEN}Birthday: {printcolors.NOCOLOR}')
         
         try:
             int(birthdate)      # Accept only numbers as valid format
@@ -94,6 +100,7 @@ def main():
         csv_file.close()
     except:
         print('\n ', file_path, f'{printcolors.WARNING}doesn\'t exist{printcolors.NOCOLOR}\n')  # First string is to indent output by two spaces
+        
         user_input = input('Would you like to create the file? y/n: ')
         
         if user_input.lower() == 'y' or user_input.lower() == 'yes':
