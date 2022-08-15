@@ -2,6 +2,8 @@
 """
 1. Create ./write_to/users.csv with column headers, if not already exist
 2. Create a new user with unique ID num and appends to ./write_to/users.csv
+NOTE: The order of values in header in create_csv() need to match with the 
+    order of values in user_info in create_user()
 """
 
 import datetime
@@ -16,8 +18,8 @@ class printcolors:
     WARNING = '\033[1;31m'    # bold, color
     NOCOLOR = '\033[0m'
 
-def create_csv(csv_file):           # Create file with headers if file don't exist
-    headers = ['User', 'Admin', 'Password', 'Name', 'Birthdate']    # TODO: This variable should be outside the function and passed as an arg form user input
+def create_csv(csv_file):       # Create file with headers if file don't exist
+    headers = ['User', 'Admin', 'Name', 'Password', 'Birthdate', 'E-mail']    # TODO: This variable should be outside the function and passed as an arg form user input
     with open(csv_file, 'w') as csv_file:
         for header in headers:
             csv_file.write(header + ',')
@@ -25,7 +27,7 @@ def create_csv(csv_file):           # Create file with headers if file don't exi
 
     print(f'\n{printcolors.OKGREEN}  Created:{printcolors.NOCOLOR}', file_path)
 
-def get_info():
+def get_info():                 # Get users info from input()
     print(f'{printcolors.OKGREEN}Enter user information{printcolors.NOCOLOR}')
 
     while True:                 # Loop until valid input
@@ -42,7 +44,7 @@ def get_info():
         
         forbid_chars = '0'      # Password may not start with "0" (zero), because the csv shortens e.g. "0001" to "1"
         test_pw = list(pw)      # To use in below logical comparison
-        if not(len(pw) == 0 or test_pw[0] == forbid_chars): # TODO: Confirm password
+        if not(len(pw) == 0 or test_pw[0] == forbid_chars): # Confirm password
             pw_confirm = getpass.getpass(f'{printcolors.GREEN}Confirm Password: {printcolors.NOCOLOR}')
         if pw == pw_confirm:    # Comfirms password
             break   # Breaks if valid input
@@ -59,12 +61,21 @@ def get_info():
             if len(birthdate) == 6:     # TODO: Check for plausible birthdate
                 break
 
-    return pw, name, birthdate
+    while True:                 # Loop until valid input
+        print(f'- Enter your -')
+        e_mail = input(f'{printcolors.GREEN}E-mail: {printcolors.NOCOLOR}')
+        
+        if len(e_mail) >= 6:   # Confirm e-mail TODO: Validate that it is a proper e-mail adress
+            e_mail_confirm = input(f'{printcolors.GREEN}Confirm e-mail: {printcolors.NOCOLOR}')
+        if e_mail == e_mail_confirm:    # Comfirms password
+            break   # Breaks if valid input
 
-def create_user():                  # Returns complete user info as list
+    return pw, name, birthdate, e_mail
+
+def create_user():              # Returns complete user info as list
     is_admin = False
 
-    pw, name, birthdate = get_info()
+    pw, name, birthdate, e_mail = get_info()
 
     id_num = str(datetime.datetime.now())    # Give unique value to id_num
     
@@ -72,12 +83,12 @@ def create_user():                  # Returns complete user info as list
     id_num = id_num.replace('-', '').replace(':', '').replace('.', '').replace(' ', '')
     id_num = 'user' + id_num
 
-    name = name.title()     # Title to accomodate for first and last name
+    name = name.title()             # Title to accomodate for first and last name
 
-    user_info = [id_num, is_admin, pw, name, birthdate]     # TODO: Is tuple better?
+    user_info = [id_num, is_admin, name, pw, birthdate, e_mail]     # TODO: Is tuple better?
     return user_info
 
-def w_user_to_csv(user_info, csv_file):
+def w_user_to_csv(user_info, csv_file): # Formats list values
     with open(csv_file, 'a') as csv_file:
         for info in user_info:
             csv_file.write(str(info) + ',')
@@ -85,7 +96,7 @@ def w_user_to_csv(user_info, csv_file):
 
     print(f'\n{printcolors.OKGREEN}  User have been appended to:{printcolors.NOCOLOR}', file_path, '\n')
     
-def new_users():
+def new_users():                # Writes user info and asks for more users  
     while True:
         print()     # For formating of output to consol
         
