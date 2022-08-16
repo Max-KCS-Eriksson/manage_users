@@ -4,6 +4,7 @@
 2. Create a new user with unique ID num and appends to ./write_to/users.csv
 NOTE: The order of values in header in create_csv() need to match with the 
     order of values in user_info in create_user()
+    NOTE: get_info() reads existing CSV-file to check for duplicate e-mails
 """
 
 import datetime
@@ -26,6 +27,23 @@ def create_csv(csv_file):       # Create file with headers if file don't exist
         csv_file.write('\n')    # Add line break after last header
 
     print(f'\n{printcolors.OKGREEN}  Created:{printcolors.NOCOLOR}', file_path)
+
+def already_registered(new_email):          # Checks if e-mail is already registered, returns True if registered already and False if not registered
+        with open(file_path, 'r') as csv_file:   # TODO: Check for duplicates in CSV-file
+            line = csv_file.readline()
+
+            for line in csv_file:
+                existing_user = line.split(',')
+
+                existing_e_mail = existing_user[-2]     # Last val of user_info is linebreak, second last is e-mail
+                
+                if new_email == existing_e_mail:
+                    print(f'{printcolors.WARNING}This e-mail is already registered{printcolors.NOCOLOR}')
+                    return True
+                elif new_email != existing_e_mail:
+                    continue                            # Continue to compare all registered e-mail adresses for duplicates
+
+            return False
 
 def get_info():                 # Get users info from input()
     print(f'{printcolors.OKGREEN}Enter user information{printcolors.NOCOLOR}')
@@ -62,13 +80,15 @@ def get_info():                 # Get users info from input()
                 break
 
     while True:                 # Loop until valid input
-        print(f'- Enter your -')
+        print(f'- Enter your -')        # TODO: Check that e-mail is not already registered
         e_mail = input(f'{printcolors.GREEN}E-mail: {printcolors.NOCOLOR}')
-        
-        if len(e_mail) >= 6:   # Confirm e-mail TODO: Validate that it is a proper e-mail adress
+
+
+        if len(e_mail) >= 6 and not(already_registered(e_mail)):   # Confirm e-mail TODO: Validate that it is a proper e-mail adress
             e_mail_confirm = input(f'{printcolors.GREEN}Confirm e-mail: {printcolors.NOCOLOR}')
-        if e_mail == e_mail_confirm:    # Comfirms password
-            break   # Breaks if valid input
+
+            if e_mail == e_mail_confirm:    # Comfirms password
+                break   # Breaks if valid input
 
     return pw, name, birthdate, e_mail
 
@@ -88,7 +108,7 @@ def create_user():              # Returns complete user info as list
     user_info = [id_num, is_admin, name, pw, birthdate, e_mail]     # TODO: Is tuple better?
     return user_info
 
-def w_user_to_csv(user_info, csv_file): # Formats list values
+def w_user_to_csv(user_info, csv_file): # Formats list values and append to csv_file
     with open(csv_file, 'a') as csv_file:
         for info in user_info:
             csv_file.write(str(info) + ',')
